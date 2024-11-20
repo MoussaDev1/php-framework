@@ -34,7 +34,6 @@ class Router
 
     private static function getConfig(): array
     {
-        // Charger la configuration des routes depuis le fichier JSON
         $config = json_decode(file_get_contents(__DIR__ . '/../../config/routes.json'), true);
         return $config;
     }
