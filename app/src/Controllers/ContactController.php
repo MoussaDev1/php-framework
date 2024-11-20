@@ -17,7 +17,7 @@ class ContactController extends AbstractController
             return $this->fetch();
         }
 
-        if ($request->getMethod() === 'GET' && isset($params['filename'])) {
+        if (isset($params['filename'])) {
             return $this->fetchone($params['filename']);
         }
 
