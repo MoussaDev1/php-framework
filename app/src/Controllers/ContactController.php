@@ -68,17 +68,17 @@ class ContactController extends AbstractController
     {
         $directory = __DIR__ . '/../../var/contact/';
         $files = glob($directory . '*.json');
-        $contacts = [];
+        $contact = [];
 
         foreach ($files as $file) {
             $data = json_decode(file_get_contents($file), true);
             if ($data) {
-                $contacts[] = $data;
+                $contact[] = $data;
             }
         }
 
         return new Response(
-            json_encode($contacts),
+            json_encode($contact),
             200,
             ['Content-Type' => 'application/json']
         );
