@@ -105,7 +105,6 @@ class ContactController extends AbstractController
         return new Response($content, 200, ['Content-Type' => 'application/json']);
     }
 
-
     private function response(array $body, int $status): void
     {
         header('Content-Type: application/json', true, $status);
