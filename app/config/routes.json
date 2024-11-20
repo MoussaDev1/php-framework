@@ -9,7 +9,8 @@
     {
         "path": "/contact",
         "methods": [
-            "POST, GET"
+            "POST",
+            "GET"
         ],
         "controller": "ContactController"
     }
