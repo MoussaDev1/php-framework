@@ -14,13 +14,12 @@ class ContactController extends AbstractController
         }
 
         if ($request->getMethod() === 'GET') {
-            return $this->fetch();
+            if (isset($params['filename'])) {
+                return $this->fetchone($params['filename']);
+            } else {
+                return $this->fetch();
+            }
         }
-
-        if (isset($params['filename'])) {
-            return $this->fetchone($params['filename']);
-        }
-
         return new Response('Methode now Allowed', 405);
     }
     public function create(Request $request): Response
