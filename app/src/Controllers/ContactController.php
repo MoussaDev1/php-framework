@@ -9,10 +9,14 @@ class ContactController extends AbstractController
 {
     public function process(Request $request): Response
     {
-        return $this->create($request);
+        if ($request->getMethod() === 'POST') {
+            return $this->create($request);
+        }
+
+        if($request->getMethod() === 'GET') {
+            return $this->fetch();
+        }
     }
-
-
     public function create(Request $request): Response
     {
         if ($request->getMethod() !== 'POST' && $request->getHeaders()['Content-Type'] !== 'application/json') {
@@ -58,6 +62,26 @@ class ContactController extends AbstractController
         ]);
 
         return new Response(json_encode(['file' => date('Y-m-d_H-i-s', $timestamp) . '_' . $body['email']]), 201, ['Content-Type' => 'application/json']);
+    }
+
+    private function fetch(): Response
+    {
+        $directory = __DIR__ . '/../../var/contact/';
+        $files = glob($directory . '*.json');
+        $contact = [];
+
+        foreach ($files as $file) {
+            $data = json_decode(file_get_contents($file), true);
+            if ($data) {
+                $contact[] = $data;
+            }
+        }
+
+        return new Response(
+            json_encode($contact),
+            200,
+            ['Content-Type' => 'application/json']
+        );
     }
 
     private function response(array $body, int $status): void
