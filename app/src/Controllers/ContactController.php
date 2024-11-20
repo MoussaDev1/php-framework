@@ -15,9 +15,9 @@ class ContactController extends AbstractController
 
     public function create(Request $request): Response
     {
-        if ($request->getMethod() !== 'POST') {
+        if ($request->getMethod() !== 'POST' && $request->getHeaders()['Content-Type'] !== 'application/json') {
             return new Response(
-                json_encode(["error" => "Invalid Method"]),
+                json_encode(["error" => "Invalid Method or Content-Type"]),
                 400,
                 ['Content-Type' => 'application/json']
             );
@@ -57,6 +57,12 @@ class ContactController extends AbstractController
             'file' => date('Y-m-d_H-i-s', $timestamp) . '_' . $body['email']
         ]);
 
-        return new Response(json_encode(['file' => $filename]), 201, ['Content-Type' => 'application/json']);
+        return new Response(json_encode(['file' => date('Y-m-d_H-i-s', $timestamp) . '_' . $body['email']]), 201, ['Content-Type' => 'application/json']);
+    }
+
+    private function response(array $body, int $status): void
+    {
+        header('Content-Type: application/json', true, $status);
+        echo json_encode($body);
     }
 }
