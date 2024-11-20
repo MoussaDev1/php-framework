@@ -9,10 +9,10 @@ class ContactController extends AbstractController
 {
     public function process(Request $request): Response
     {
-        return $this->create($request);
+        if ($request->getMethod() === 'POST') {
+            return $this->create($request);
+        }
     }
-
-
     public function create(Request $request): Response
     {
         if ($request->getMethod() !== 'POST' && $request->getHeaders()['Content-Type'] !== 'application/json') {
