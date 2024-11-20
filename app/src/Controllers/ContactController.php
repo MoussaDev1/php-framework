@@ -9,24 +9,28 @@ class ContactController extends AbstractController
 {
     public function process(Request $request): Response
     {
-        return $this->handleRequest($request);
+        return $this->create($request);
     }
 
 
-    public function handleRequest(Request $request): Response
+    public function create(Request $request): Response
     {
         if ($request->getMethod() !== 'POST') {
-            return (new Response())
-                ->setStatus(400)
-                ->setContent('Method Not Allowed');
+            return new Response(
+                json_encode(["error" => "Invalid Method"]),
+                400,
+                ['Content-Type' => 'application/json']
+            );
         }
 
         $body = json_decode(file_get_contents('php://input'), true);
 
         if (!isset($body['email'], $body['subject'], $body['message'])) {
-            return (new Response())
-                ->setStatus(400)
-                ->setContent('Invalid Request');
+            return new Response(
+                json_encode(["error" => "Invalid Enter Data"]),
+                400,
+                ['Content-Type' => 'application/json']
+            );
         }
 
         $timestamp = time();
@@ -42,17 +46,17 @@ class ContactController extends AbstractController
         ];
 
         if (!file_put_contents($filepath, json_encode($ContactFrom))) {
-            return (new Response())
-                ->setStatus(400)
-                ->setContent('Failed to save contact form');
+            return new Response(
+                json_encode(["error" => "Invalid JSON"]),
+                400,
+                ['Content-Type' => 'application/json']
+            );
         }
 
         $responseContent = json_encode([
             'file' => date('Y-m-d_H-i-s', $timestamp) . '_' . $body['email']
         ]);
 
-        return (new Response())
-            ->setStatus(201)
-            ->setContent($responseContent);
+        return new Response(json_encode(['file' => $filename]), 201, ['Content-Type' => 'application/json']);
     }
 }
