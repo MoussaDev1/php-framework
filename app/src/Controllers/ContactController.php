@@ -26,6 +26,13 @@ class ContactController extends AbstractController
                 return $this->update($params['filename']);
             }
         }
+
+        if ($request->getMethod() === 'DELETE') {
+            if (isset($params['filename'])) {
+                return $this->update($params['filename']);
+            }
+        }
+
         return new Response('Methode now Allowed', 405);
     }
     public function create(Request $request): Response
@@ -153,10 +160,26 @@ class ContactController extends AbstractController
         );
     }
 
-
-    private function response(array $body, int $status): void
+    public function delete(Request $request, string $filename): Response
     {
-        header('Content-Type: application/json', true, $status);
-        echo json_encode($body);
+        $filePath = __DIR__ . '/../../var/contact/' . $filename . '.json';
+
+        if (!file_exists($filePath)) {
+            return new Response(
+                json_encode(["error" => "Contact not found"]),
+                404,
+                ['Content-Type' => 'application/json']
+            );
+        }
+
+        if (unlink($filePath)) {
+            return new Response('', 204);
+        }
+
+        return new Response(
+            json_encode(["error" => "Unable to delete the contact"]),
+            404,
+            ['Content-Type' => 'application/json']
+        );
     }
 }

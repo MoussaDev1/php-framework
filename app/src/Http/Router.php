@@ -21,17 +21,24 @@ class Router
             $controller = self::getController($route);
 
             if ($controller instanceof ContactController) {
+                if ($request->getMethod() === 'POST') {
+                    return $controller->create($request);
+                }
 
                 if (isset($params['filename'])) {
-                    if ($request->getMethod() === 'PATCH' && isset($params['filename'])) {
+                    if ($request->getMethod() === 'DELETE') {
+                        return $controller->delete($request, $params['filename']);
+                    }
+
+                    if ($request->getMethod() === 'PATCH') {
                         return $controller->update($params['filename']);
                     }
+
                     return $controller->fetchone($params['filename']);
                 } else {
                     return $controller->fetch();
                 }
             }
-
 
 
 
