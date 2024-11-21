@@ -20,6 +20,12 @@ class ContactController extends AbstractController
                 return $this->fetch();
             }
         }
+
+        if ($request->getMethod() === 'PATCH') {
+            if (isset($params['filename'])) {
+                return $this->update($params['filename']);
+            }
+        }
         return new Response('Methode now Allowed', 405);
     }
     public function create(Request $request): Response
@@ -104,6 +110,49 @@ class ContactController extends AbstractController
         $content = file_get_contents($filePath);
         return new Response($content, 200, ['Content-Type' => 'application/json']);
     }
+
+    public function update(string $filename): Response
+    {
+        $filePath = __DIR__ . '/../../var/contact/' . $filename . '.json';
+
+        if (!file_exists($filePath)) {
+            return new Response(
+                json_encode(["error" => "Contact not found"]),
+                404,
+                ['Content-Type' => 'application/json']
+            );
+        }
+
+        $goodBody = ['email', 'subject', 'message'];
+        $body = json_decode(file_get_contents('php://input'), true);
+
+        foreach ($body as $rows => $value) {
+            if (!in_array($rows, $goodBody) || $value = null) {
+                return new Response(
+                    json_encode(["error" => "Invalid or empty fields"]),
+                    400,
+                    ['Content-Type' => 'application/json']
+                );
+            }
+        }
+
+        $existingContent = json_decode(file_get_contents($filePath), true);
+
+        foreach ($body as $row => $value) {
+            $existingContent[$row] = $value;
+        }
+
+        $existingContent['dateOfLastUpdate'] = time();
+
+        file_put_contents($filePath, json_encode($existingContent, JSON_PRETTY_PRINT));
+
+        return new Response(
+            json_encode($existingContent),
+            200,
+            ['Content-Type' => 'application/json']
+        );
+    }
+
 
     private function response(array $body, int $status): void
     {

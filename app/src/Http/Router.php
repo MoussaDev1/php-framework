@@ -21,12 +21,20 @@ class Router
             $controller = self::getController($route);
 
             if ($controller instanceof ContactController) {
+
                 if (isset($params['filename'])) {
+                    if ($request->getMethod() === 'PATCH' && isset($params['filename'])) {
+                        return $controller->update($params['filename']);
+                    }
                     return $controller->fetchone($params['filename']);
                 } else {
                     return $controller->fetch();
                 }
             }
+
+
+
+
             return $controller->process($request);
         }
         return new Response('Not found', 404);
