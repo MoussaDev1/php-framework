@@ -25,6 +25,7 @@ class Router
                     return $controller->create($request);
                 }
                 if ($request->getMethod() === 'GET') {
+
                     return $controller->fetch();
                 }
             }

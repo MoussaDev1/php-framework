@@ -15,10 +15,5 @@
         "path": "/contact/get",
         "methods": ["GET"],
         "controller": "ContactController"
-    },
-    {
-        "path": "/contact/:filename",
-        "methods": ["GET", "PATCH", "DELETE"],
-        "controller": "ContactController"
     }
 ]

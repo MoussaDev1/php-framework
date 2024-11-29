@@ -82,7 +82,10 @@ class ContactController extends AbstractController
             }
         }
 
-        $contactsArray = array_map(fn($contact) => $contact->toArray(), $contact);
+        $contactsArray = [];
+        foreach ($contact as $contacts) {
+            $contactsArray[] = $contacts->toArray();
+        }
 
         return new Response(
             json_encode($contactsArray),
