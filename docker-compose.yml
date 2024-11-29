@@ -1,6 +1,6 @@
 services:
     php-framework:
-        container_name: php-framework
+        container_name: php-framework-v2
         build: .
         volumes: 
              - ./app:/var/www/html

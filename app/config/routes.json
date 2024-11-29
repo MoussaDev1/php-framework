@@ -5,8 +5,13 @@
         "controller": "TestController"
     },
     {
-        "path": "/contact",
-        "methods": ["POST", "GET"],
+        "path": "/contact/post",
+        "methods": ["POST"],
+        "controller": "ContactController"
+    },
+    {
+        "path": "/contact/get",
+        "methods": ["GET"],
         "controller": "ContactController"
     },
     {
