@@ -64,8 +64,8 @@ class ContactController extends AbstractController
 
     public function fetch(): Response
     {
-        $filepath = __DIR__ . '/../../src/var/contact/';
-        $files = glob($filepath . '*.json');
+        $repositorypath = __DIR__ . '/../../src/var/contact/';
+        $files = glob($repositorypath . '*.json');
         $contact = [];
 
         foreach ($files as $file) {
@@ -117,5 +117,58 @@ class ContactController extends AbstractController
             $data['dateOfUpdate']
         );
         return new Response(json_encode($contactForm->toArray()), 200, ['Content-Type' => 'application/json']);
+    }
+
+    public function update(string $filename): Response
+    {
+        $filePath = __DIR__ . '/../../src/var/contact/' . $filename . '.json';
+
+        if (!file_exists($filePath)) {
+            return new Response(
+                json_encode(["error" => "Contact not found"]),
+                404,
+                ['Content-Type' => 'application/json']
+            );
+        }
+
+        $goodBody = ['email', 'subject', 'message'];
+        $body = json_decode(file_get_contents('php://input'), true);
+
+        foreach ($body as $rows => $value) {
+            if (!in_array($rows, $goodBody) || $value = null) {
+                return new Response(
+                    json_encode(["error" => "Invalid or empty fields"]),
+                    400,
+                    ['Content-Type' => 'application/json']
+                );
+            }
+        }
+
+        $existingContent = json_decode(file_get_contents($filePath), true);
+
+        $contactForm = new ContactForm(
+            $existingContent['email'],
+            $existingContent['subject'],
+            $existingContent['message'],
+            $existingContent['dateOfCreation'],
+            $existingContent['dateOfUpdate']
+        );
+
+        foreach ($body as $key => $value) {
+            $setter = 'set' . ucfirst($key);
+            if (method_exists($contactForm, $setter)) {
+                $contactForm->$setter($value);
+            }
+        }
+
+        $contactForm->setDateOfUpdate(time());
+
+        file_put_contents($filePath, json_encode($existingContent, JSON_PRETTY_PRINT));
+
+        return new Response(
+            json_encode($existingContent),
+            200,
+            ['Content-Type' => 'application/json']
+        );
     }
 }

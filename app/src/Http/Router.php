@@ -31,6 +31,11 @@ class Router
                         return $controller->fetch();
                     }
                 }
+                if ($request->getMethod() === 'PATCH') {
+                    if (isset($params['filename'])) {
+                        return $controller->update($params['filename']);
+                    }
+                }
             }
 
 
