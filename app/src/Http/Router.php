@@ -36,6 +36,11 @@ class Router
                         return $controller->update($params['filename']);
                     }
                 }
+                if($request->getMethod()==='DELETE'){
+                    if (isset($params['filename'])){
+                        return $controller->delete($params['filename']);
+                    }
+                }
             }
 
 
