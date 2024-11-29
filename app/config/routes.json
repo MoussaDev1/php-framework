@@ -7,7 +7,7 @@
         "controller": "TestController"
     },
     {
-        "path": "/contact/post",
+        "path": "/contact",
         "methods": ["POST"],
         "controller": "ContactController"
     },
