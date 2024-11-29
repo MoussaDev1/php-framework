@@ -8,7 +8,7 @@ use App\Models\ContactForm;
 
 class ContactController extends AbstractController
 {
-    public function process(Request $request, array $params = []): Response
+    public function process(Request $request): Response
     {
 
         return new Response('Methode now Allowed', 405);
@@ -57,6 +57,35 @@ class ContactController extends AbstractController
 
         return new Response(
             json_encode(['file' => date('Y-m-d_H-i-s', $timestamp) . '_' . $ContactForm->getEmail()]),
+            200,
+            ['Content-Type' => 'application/json']
+        );
+    }
+
+    public function fetch(): Response
+    {
+        $filepath = __DIR__ . '/../../src/var/contact/';
+        $files = glob($filepath . '*.json');
+        $contact = [];
+
+        foreach ($files as $file) {
+            $data = json_decode(file_get_contents($file), true);
+
+            if (isset($data['email'], $data['subject'], $data['message'], $data['dateOfCreation'], $data['dateOfUpdate'])) {
+                $contact[] = new ContactForm(
+                    $data['email'],
+                    $data['subject'],
+                    $data['message'],
+                    $data['dateOfCreation'],
+                    $data['dateOfUpdate']
+                );
+            }
+        }
+
+        $contactsArray = array_map(fn($contact) => $contact->toArray(), $contact);
+
+        return new Response(
+            json_encode($contactsArray),
             200,
             ['Content-Type' => 'application/json']
         );
