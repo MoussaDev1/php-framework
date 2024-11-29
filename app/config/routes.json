@@ -15,5 +15,10 @@
         "path": "/contact/get",
         "methods": ["GET"],
         "controller": "ContactController"
+    },
+    {
+        "path": "/contact/get/:filename",
+        "methods": ["GET"],
+        "controller": "ContactController"
     }
 ]

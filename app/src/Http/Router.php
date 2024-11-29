@@ -25,8 +25,11 @@ class Router
                     return $controller->create($request);
                 }
                 if ($request->getMethod() === 'GET') {
-
-                    return $controller->fetch();
+                    if (isset($params['filename'])) {
+                        return $controller->fetchOne($params['filename']);
+                    } else {
+                        return $controller->fetch();
+                    }
                 }
             }
 

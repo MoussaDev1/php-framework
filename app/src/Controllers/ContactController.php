@@ -93,4 +93,29 @@ class ContactController extends AbstractController
             ['Content-Type' => 'application/json']
         );
     }
+
+    public function fetchOne(string $filename): Response
+    {
+        $filepath = __DIR__ . '/../../src/var/contact/' . $filename . '.json';
+
+        if (!file_exists($filepath)) {
+            return new Response(
+                json_encode(["error" => "Contact not found"]),
+                404,
+                ['Content-Type' => 'application/json']
+            );
+        }
+
+        $content = file_get_contents($filepath);
+        $data = json_decode($content, true);
+
+        $contactForm = new ContactForm(
+            $data['email'],
+            $data['subject'],
+            $data['message'],
+            $data['dateOfCreation'],
+            $data['dateOfUpdate']
+        );
+        return new Response(json_encode($contactForm->toArray()), 200, ['Content-Type' => 'application/json']);
+    }
 }
